@@ -12,7 +12,6 @@ typedef struct	s_philosopher
 	int					n;
 	int					eat_counter;
 	unsigned long int	time_since_eat;
-	char*				n_str;
 	int					r_fork;
 	int					l_fork;
 }				t_philo;
@@ -32,7 +31,6 @@ typedef struct	s_params
 
 }				t_params;
 
-char	*ft_itoa(int n);
 int		min(int a, int b);
 int		max(int a, int b);
 void	putstr(char* str);

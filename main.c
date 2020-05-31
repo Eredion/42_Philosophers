@@ -16,12 +16,12 @@ long unsigned int get_time()
 	return (end.tv_usec);
 }
 
-void print_action(int n, unsigned long int time, char *name)
+void print_action(int n, unsigned long int time, int name)
 {
 	pthread_mutex_lock(&g_params.write_lock);
 	putnbr(time);
 	putstr(" ");
-	putstr(name);
+	putnbr(name);
 	if (n == 1)
 		putstr(" has taken a fork\n");
 	else if (n == 2)
@@ -46,9 +46,9 @@ void* phil(void* arg)
 	while (++i < filo->eat_counter)
 	{
 		pthread_mutex_lock(&g_params.forks[filo->l_fork]);
-		print_action(1, timestamp(g_params.start_time), filo->n_str);
+		print_action(1, timestamp(g_params.start_time), filo->n);
 		pthread_mutex_lock(&g_params.forks[filo->r_fork]);
-		print_action(1, timestamp(g_params.start_time), filo->n_str);
+		print_action(1, timestamp(g_params.start_time), filo->n);
 	/*	if ((int)timestamp(filo->time_since_eat) >= filo->die_time)
 		{
 			printf("%lu %s died\n", timestamp(g_params.start_time), filo->n_str);
@@ -56,13 +56,13 @@ void* phil(void* arg)
 		}
 	*/	//printf("tiempo de vida %lu\t life time %i\n", timestamp(filo->time_since_eat), filo->die_time);
 		filo->time_since_eat = get_time();
-		print_action(2, timestamp(g_params.start_time), filo->n_str);
+		print_action(2, timestamp(g_params.start_time), filo->n);
 		usleep(g_params.eat_time);
 		pthread_mutex_unlock(&g_params.forks[filo->l_fork]);
 		pthread_mutex_unlock(&g_params.forks[filo->r_fork]);
-		print_action(3, timestamp(g_params.start_time), filo->n_str);
+		print_action(3, timestamp(g_params.start_time), filo->n);
 		usleep(g_params.sleep_time);
-		print_action(4, timestamp(g_params.start_time), filo->n_str);
+		print_action(4, timestamp(g_params.start_time), filo->n);
 	}
 	return (NULL);
 }
@@ -84,11 +84,11 @@ void	init_params(t_params *g_params) //Modificar con args
 {
 
 	g_params->start_time = get_time();
-	g_params->philos_n = 2;
-	g_params->eat_counter = 3;
+	g_params->philos_n = 5;
+	g_params->eat_counter = 10;
 	g_params->eat_time = 5000 * 1000;
-	g_params->sleep_time = 4000 * 1000;
-	g_params->die_time = 5 * 1000;
+	g_params->sleep_time = 6000 * 1000;
+	g_params->die_time = 400 * 1000;
 	g_params->forks = init_forks(g_params->philos_n);
 	g_params->threads = (pthread_t*)malloc(sizeof(pthread_t) * g_params->philos_n);
 	pthread_mutex_init(&g_params->write_lock, NULL);
@@ -103,7 +103,6 @@ void	init_philos(t_params *g_params)
 	while (++i < g_params->philos_n)
 	{
 		g_params->philos[i].n = i;
-		g_params->philos[i].n_str = ft_itoa(i + 1);
 		g_params->philos[i].eat_counter = g_params->eat_counter;
 		g_params->philos[i].time_since_eat = g_params->start_time;
 		g_params->philos[i].r_fork = min(i, (i + 1) % g_params->philos_n);
@@ -113,7 +112,21 @@ void	init_philos(t_params *g_params)
 
 void	*death_check()
 {
+	int i;
 
+	while(1)
+	{
+		i = -1;
+		while(i++ < g_params.philos_n)
+		{
+			if (g_params.philos[i].time_since_eat >= (unsigned long int)g_params.die_time)
+			{
+				printf("caca\n");
+				exit(0);
+			}
+		} 
+	}
+	return NULL;
 }
 
 void	init_threads(t_params *g_params)
@@ -124,7 +137,7 @@ void	init_threads(t_params *g_params)
 	i = -1;
 	while (++i < g_params->philos_n)
 		pthread_create(&g_params->threads[i], NULL, phil, (void *)&g_params->philos[i]);
-	pthread_create(death_thread, NULL, death_check, NULL);
+	pthread_create(&death_thread, NULL, death_check, NULL);
 //	while (1)
 
 /*	if ((int)timestamp(g_params->philos[0].time_since_eat) >= g_params->die_time)
