@@ -1,6 +1,6 @@
-NAME = a.out
+NAME = philo_one
 
-SRCS = main.c utils.c
+SRCS = main.c utils.c init.c input.c
 
 OBJS = $(SRCS:.c=.o)
 
@@ -29,6 +29,5 @@ test:	$(NAME)
 	@echo Compiling and testing $(NAME)...
 	@echo
 	@./$(NAME)
-#	@rm -f $(NAME) a.out
 
 .PHONY: all clean fclean re test

@@ -11,7 +11,7 @@ typedef struct	s_philosopher
 {
 	int					n;
 	int					eat_counter;
-	unsigned long int	time_since_eat;
+	unsigned long		time_since_eat;
 	int					r_fork;
 	int					l_fork;
 }				t_philo;
@@ -19,11 +19,11 @@ typedef struct	s_philosopher
 typedef struct	s_params
 {
 	int					philos_n;
-	int					eat_time;
-	int					sleep_time;
-	int					die_time;
+	unsigned long		eat_time;
+	unsigned long		sleep_time;
+	unsigned long		die_time;
 	int					eat_counter;
-	unsigned long int	start_time;
+	unsigned long		start_time;
 	pthread_mutex_t*	forks;
 	pthread_mutex_t		write_lock;
 	pthread_t*			threads;
@@ -31,9 +31,22 @@ typedef struct	s_params
 
 }				t_params;
 
-int		min(int a, int b);
-int		max(int a, int b);
-void	putstr(char* str);
-void	putnbr(unsigned long nb);
+int					min(int a, int b);
+int					max(int a, int b);
+void				putstr(char* str);
+void				putnbr(unsigned long nb);
+int					ft_atoi(char* str);
+void				init_params(char** argv);
+void				init_philos(void);
+void				init_threads(void);
+void*				phil(void* arg);
+void				*death_check();
+void				free_mem(void);
+void				check_input(int argc, char** argv);
+int					check_argv(char **argv);
+unsigned long		get_time(void);
+unsigned long		partial_time(suseconds_t start);
+pthread_mutex_t*	init_forks(int n);
+void				print_action(int n, unsigned long int time, int name);
 
 #endif

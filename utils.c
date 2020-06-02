@@ -31,3 +31,4 @@ void	putnbr(unsigned long nb)
 		putnbr(nb / 10);
 	ft_putchar((nb % 10) + '0');
 }
+
