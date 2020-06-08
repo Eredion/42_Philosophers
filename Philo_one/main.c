@@ -46,7 +46,10 @@ void print_action(int n, unsigned long int time, int name)
 	else if (n == 5)
 		putstr(" has eaten enough\n");
 	else
+	{
 		putstr(" died\n");
+		return ;
+	}
 	pthread_mutex_unlock(&g_params.write_lock);
 }
 

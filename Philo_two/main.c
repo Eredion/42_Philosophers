@@ -1,4 +1,4 @@
-#include "philo_one.h"
+#include "philo_two.h"
 
 t_params g_params;
 
@@ -17,13 +17,8 @@ unsigned long partial_time(suseconds_t start)
 
 void	free_mem()
 {
-	int i;
-
-	i = -1;
-	pthread_mutex_destroy(&g_params.write_lock);
-	while (++i < g_params.philos_n)
-		pthread_mutex_destroy(&g_params.forks[i]);
-	free(g_params.forks);
+	sem_unlink("/write_sem");
+	sem_unlink("/forks_sem");
 	free(g_params.philos);
 	free(g_params.threads);
 	exit(0);
@@ -31,7 +26,7 @@ void	free_mem()
 
 void print_action(int n, unsigned long int time, int name)
 {
-	pthread_mutex_lock(&g_params.write_lock);
+	sem_wait(g_params.write_sem);
 	putnbr(time);
 	putstr("\t ");
 	putnbr(name + 1);
@@ -46,13 +41,18 @@ void print_action(int n, unsigned long int time, int name)
 	else if (n == 5)
 		putstr(" has eaten enough\n");
 	else
+	{
 		putstr(" died\n");
-	pthread_mutex_unlock(&g_params.write_lock);
+		return ;
+	}
+	sem_post(g_params.write_sem);
 }
 
 int	main(int argc, char** argv)
 {
 	check_input(argc, argv);
+	sem_unlink("/write_sem");
+	sem_unlink("/forks_sem");
 	init_params(argv);
 	init_philos();
 	init_threads();

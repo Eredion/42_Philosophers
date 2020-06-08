@@ -8,6 +8,7 @@
 #include <sys/time.h>
 #include <semaphore.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 
 typedef struct	s_philosopher
 {
@@ -25,7 +26,8 @@ typedef struct	s_params
 	unsigned long		die_time;
 	int					eat_counter;
 	unsigned long		start_time;
-
+	sem_t*				write_sem;
+	sem_t*				forks;
 	pthread_t*			threads;
 	t_philo*			philos;
 
@@ -46,7 +48,6 @@ void				check_input(int argc, char** argv);
 int					check_argv(char **argv);
 unsigned long		get_time(void);
 unsigned long		partial_time(suseconds_t start);
-pthread_mutex_t*	init_forks(int n);
 void				print_action(int n, unsigned long int time, int name);
 
 #endif
