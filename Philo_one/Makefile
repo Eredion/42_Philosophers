@@ -1,4 +1,4 @@
-NAME = philo_one
+NAME = a.out
 
 SRCS = main.c utils.c init.c input.c
 

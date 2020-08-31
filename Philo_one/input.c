@@ -1,24 +1,39 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   input.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: asegovia <asegovia@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/08/27 11:05:11 by asegovia          #+#    #+#             */
+/*   Updated: 2020/08/27 11:34:43 by asegovia         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo_one.h"
 
 t_params g_params;
 
-void	*death_check()
+void	*death_check(void)
 {
 	int i;
 
-	while(1)
+	while (1)
 	{
 		i = -1;
-		while(++i < g_params.philos_n)
+		while (++i < g_params.philos_n)
 		{
-			if (partial_time(g_params.philos[i].time_since_eat) >= g_params.die_time)
+			if (g_params.philos[i].full == 1)
+				continue ;
+			if (partial_time(g_params.philos[i].time_since_eat)
+					>= g_params.die_time)
 			{
 				print_action(0, partial_time(g_params.start_time), i);
 				free_mem();
 			}
 		}
 	}
-	return NULL;
+	return (NULL);
 }
 
 int		check_argv(char **argv)
@@ -27,10 +42,10 @@ int		check_argv(char **argv)
 	int c;
 
 	i = 1;
-	while(argv[i] != NULL)
+	while (argv[i] != NULL)
 	{
 		c = 0;
-		while(argv[i][c] != '\0')
+		while (argv[i][c] != '\0')
 		{
 			if (argv[i][c] < '0' || argv[i][c] > '9')
 				return (0);
@@ -41,7 +56,7 @@ int		check_argv(char **argv)
 	return (1);
 }
 
-void	check_input(int argc, char** argv)
+void	check_input(int argc, char **argv)
 {
 	if (argc != 5 && argc != 6)
 	{
@@ -56,11 +71,11 @@ void	check_input(int argc, char** argv)
 	}
 }
 
-int		ft_atoi(char* str)
+int		ft_atoi(char *str)
 {
-	int				i;
-	long long int	result;
-	long long int	neg;
+	int		i;
+	int64_t	result;
+	int64_t	neg;
 
 	i = 0;
 	neg = 1;
@@ -83,4 +98,3 @@ int		ft_atoi(char* str)
 	}
 	return (result * neg);
 }
-

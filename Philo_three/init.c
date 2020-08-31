@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: asegovia <asegovia@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/08/28 11:51:19 by asegovia          #+#    #+#             */
+/*   Updated: 2020/08/28 12:02:21 by asegovia         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo_three.h"
 
 t_params g_params;
 
-void* phil(void* arg)
+void	*phil(void *arg)
 {
-	t_philo* phil;
+	t_philo	*phil;
 
 	phil = (t_philo*)arg;
 	g_params.philos[phil->n].time_since_eat = get_time();
@@ -20,10 +32,8 @@ void* phil(void* arg)
 		usleep(g_params.eat_time);
 		sem_post(g_params.forks);
 		sem_post(g_params.forks);
-		if (phil->eat_counter > 0)
-			--phil->eat_counter;
-		if (phil->eat_counter == 0)
-			break;
+		if (eat_action(phil) == 0)
+			break ;
 		print_action(3, partial_time(g_params.start_time), phil->n);
 		usleep(g_params.sleep_time);
 		print_action(4, partial_time(g_params.start_time), phil->n);
@@ -32,7 +42,7 @@ void* phil(void* arg)
 	return (NULL);
 }
 
-void	init_params(char** argv)
+void	init_params(char **argv)
 {
 	g_params.start_time = get_time();
 	g_params.philos_n = ft_atoi(argv[1]);
@@ -43,12 +53,12 @@ void	init_params(char** argv)
 		g_params.eat_counter = ft_atoi(argv[5]);
 	else
 		g_params.eat_counter = -1;
-	g_params.threads = (pthread_t*)malloc
-		(sizeof(pthread_t) * g_params.philos_n);
+	g_params.threads = (pthread_t*)malloc(sizeof(pthread_t)
+						* g_params.philos_n);
 	g_params.write_sem = sem_open("/write_sem", O_CREAT | O_EXCL, 0660, 1);
 	g_params.exit_sem = sem_open("/exit_sem", O_CREAT | O_EXCL, 0660, 0);
 	g_params.killer_sem = sem_open("/killer_sem", O_CREAT | O_EXCL, 0660, 0);
-	g_params.forks = sem_open("/forks_sem",	O_CREAT | O_EXCL, 0660,
+	g_params.forks = sem_open("/forks_sem", O_CREAT | O_EXCL, 0660,
 		g_params.philos_n);
 }
 
@@ -66,13 +76,14 @@ void	init_philos(void)
 	}
 }
 
-void *end()
+void	*end(void *ptr)
 {
 	int	i;
 
+	(void)ptr;
 	sem_wait(g_params.exit_sem);
 	i = -1;
-	while(++i < g_params.philos_n)
+	while (++i < g_params.philos_n)
 		sem_post(g_params.killer_sem);
 	free_mem();
 	exit(0);
@@ -80,7 +91,7 @@ void *end()
 
 void	init_process(void)
 {
-	int i;
+	int			i;
 	pthread_t	exit_thread;
 
 	i = -1;
